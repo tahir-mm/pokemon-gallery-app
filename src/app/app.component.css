@@ -1,0 +1,52 @@
+img {
+  display: block;
+}
+
+.header-div {
+  position: absolute;
+  top : 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 300px;
+  //border: 2px solid #ccc;
+
+}
+
+.image-div {
+  position: relative;
+  top : 0;
+  left: 0;
+  right: 0;
+  height: auto;
+  width: 100%;
+  display: inline-block;
+}
+
+.top-left-text {
+  position: absolute;
+  top:10%;
+  left:10%;
+  transform: translate (-50%, -50%);
+  color: white;
+  font-weight: bold;
+}
+
+
+.content-div {
+  position: absolute;
+  width: 100%;
+  top: 380px;
+  left: 0;
+  bottom: 40px;
+  right: 0;
+  background: white;
+  text-align: center;
+  order: 2px solid #ccc;
+}
+
+.wrapper {
+  margin-left:auto;
+  margin-right:auto;
+  width:100%;
+}
