@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from "@angular/http";
+
+/**
+ * Adds the toPromise() method to
+ * convert an Observable to a Promise.
+ */
 import "rxjs/add/operator/toPromise";
 
 import { Pokemon } from "./../model/pokemon";
@@ -8,10 +13,13 @@ import { Pokemon } from "./../model/pokemon";
 @Injectable()
 export class PokemonService {
 
+  /**
+  * Pokemon API URL as per requirement first 151 Pokemons
+  */
   private apiUrl: string = 'https://pokeapi.co/api/v2/pokemon?limit=151&offset=0';
 
-  constructor(private _http: Http) { }
 
+  constructor(private _http: Http) { }
 
   fetchPokemon() {
 
