@@ -12,10 +12,9 @@
       <button (click)="loadPreviousPage()">Previous </button>
       <button (click)="loadPage()">Next </button>
     </div>
-
   </div>
 
-  <h1 *ngIf="!pokemon">Loading...</h1>
+  <h6 *ngIf="loading">Loading...</h6>
   <mat-grid-list [cols]="cols | async">
         <mat-grid-tile *ngFor="let item of pokemon">
           <img src="{{ item.image() }}">

@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
-//import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule } from "@angular/common/http";
 import { HttpModule } from "@angular/http";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from "@angular/flex-layout";
@@ -13,7 +13,6 @@ import { PokemonService } from './services/pokemon.service';
 import { PaginationService } from './services/pagination.service';
 
 
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,6 +22,7 @@ import { PaginationService } from './services/pagination.service';
     BrowserModule,
     FormsModule,
     HttpModule,
+    HttpClientModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
     MatGridListModule,

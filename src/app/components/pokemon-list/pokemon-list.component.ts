@@ -41,6 +41,11 @@ export class PokemonListComponent implements OnInit {
   */
   page: any = {};
 
+  loading: boolean = false;
+
+  /**
+  *To make Pokemon list responsive observable object.
+  */
   public cols: Observable<number>;
 
   /**
@@ -58,27 +63,26 @@ export class PokemonListComponent implements OnInit {
   /**
    * A lifecycle method
    * that is automatically
-   * envoked when the component
+   * invoked when the component
    * is created.
    */
   ngOnInit() {
 
     /**
     * Responsive configurations
+    * xs 1 column,
+    * sm & md 2 columns
+    * large & extra large 4 columns
     */
-    const grid = new Map([
-      ["xs", 1],
-      ["sm", 2],
-      ["md", 2],
-      ["lg", 4],
-      ["xl", 4]
-    ]);
+    const grid = new Map([ ["xs", 1], ["sm", 2], ["md", 2],  ["lg", 4], ["xl", 4]]);
+
     let start: number;
     grid.forEach((cols, mqAlias) => {
       if (this.observableMedia.isActive(mqAlias)) {
         start = cols;
       }
     });
+
     this.cols = this.observableMedia.asObservable()
       .map(change => {
         console.log(change);
@@ -91,22 +95,40 @@ export class PokemonListComponent implements OnInit {
      * Load all Pokemon objects.
      */
     this.loadAllPokemon();
+
   }
 
+
+  /**
+  * Load all Pokemon 151 objects first time
+  * and then use fetchedPokemon cache for
+  * filtering and pagination.
+  */
   loadAllPokemon() {
-    this.pokemonService.fetchPokemon()
-      .then((pokemon) => {
+    this.loading = true;
 
-       /**
-        * populating fetched pokemon cache.
-        */
-       this.fetchedPokemon = pokemon;
+    this.pokemonService.getAllPokemon().subscribe( data => {
 
-       /**
-        * Load the first page of Pokemon.
-        */
-        this.loadPage();
-     });
+      this.fetchedPokemon = this.parsePokemonIds(data);
+
+     /**
+      * Load the first page of Pokemon.
+      */
+      this.loadPage();
+      this.loading = false;
+      console.log(`loading finished ... ${this.pokemon.length}`);
+    },
+    (err: any) => {
+        this.loading = false;
+      if(err.error instanceof Error) {
+
+        console.log(`An error occurred ${err.error.message}`);
+      } else {
+
+        console.log(`Backend returned status code ${err.status}`);
+        console.log(`Response Body ${err.error}`);
+      }
+    });
   }
 
   loadPage() {
@@ -154,7 +176,6 @@ export class PokemonListComponent implements OnInit {
       );
 
     }
-
   }
 
   /**
@@ -165,8 +186,27 @@ export class PokemonListComponent implements OnInit {
 
     console.log("Clear Search Criteria.");
     this.searchToken = '';
-    this.pokemon = this.fetchedPokemon;
+
+    // get current page of pokemon
+    this.pokemon = this.fetchedPokemon.slice(this.page.startIndex, this.page.endIndex);
   }
 
+
+  /**
+  *Utility method to parse ids from url.
+  *
+  */
+  private parsePokemonIds(data) {
+    var allPokemon = [];
+    data.forEach((entry) => {
+      var p = new Pokemon();
+      p.name = entry.name;
+      var url = entry.url;
+      p.id = entry.url.match(/\d+(?!.*\d)/);
+      allPokemon.push(p);
+    });
+
+    return allPokemon;
+  }
 
 }
