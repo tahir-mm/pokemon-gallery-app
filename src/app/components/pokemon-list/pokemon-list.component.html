@@ -1,21 +1,30 @@
-<div style="width:100%; text-align:center;">
+<div  class="container-fluid">
 
-  <div class="action-wrapper ">
+  <div class="row">
 
-    <div class="search-criteria-div">
+    <div class="col-sm-4" style="text-align:right">
       <lable>Search:</lable>
       <input [(ngModel)]='searchToken' style="height:30px; width:200px;" placeholder="Minimum 2 characters">
-      <button (click)="searchPokemon()">Search</button> <button (click)="clearSearch()">Clear Search </button>
+
     </div>
 
-    <div class="pagination-div">
+    <div class="col-sm-4" style="text-align:left">
+      <button (click)="searchPokemon()">Search</button>
+      <button (click)="clearSearch()">Clear Search </button>
+    </div>
+
+    <div class="col-sm-4" style="text-align:center">
       <button (click)="loadPreviousPage()">Previous </button>
       <button (click)="loadPage()">Next </button>
     </div>
   </div>
 
-  <h6 *ngIf="loading">Loading...</h6>
-  <mat-grid-list [cols]="cols | async">
+
+  <div class="row">
+
+    <div class="col-xl-12" style="text-align:center">
+      <h6 *ngIf="loading">Loading...</h6>
+      <mat-grid-list [cols]="cols | async">
         <mat-grid-tile *ngFor="let item of pokemon">
           <img src="{{ item.image() }}">
           <div>
@@ -23,7 +32,11 @@
             <label style="font-weight:bold;">{{item.formattedName()}}</label>
           </div>
         </mat-grid-tile>
-  </mat-grid-list>
+      </mat-grid-list>
+    </div>
+
+  </div>
 
 </div>
+
 

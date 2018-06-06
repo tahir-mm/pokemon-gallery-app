@@ -9,6 +9,9 @@ import { Pokemon } from "./../model/pokemon";
 @Injectable()
 export class PokemonService {
 
+  /**
+   * Inject the httpClient
+   */
   constructor(private _http: HttpClient) { }
 
   /**
@@ -16,6 +19,9 @@ export class PokemonService {
   */
   private apiUrl: string = 'https://pokeapi.co/api/v2/pokemon?offset=0&limit=151';
 
+  /**
+  * Return response object containing body
+  */
   getPokemon() : Observable<any> {
 
     var headers = new HttpHeaders();
@@ -24,6 +30,9 @@ export class PokemonService {
     return this._http.get<any> (this.apiUrl, { headers });
   }
 
+  /**
+  * Return Pokemon array from response body.
+  */
   getAllPokemon() : Observable<any> {
 
     var headers = new HttpHeaders();
