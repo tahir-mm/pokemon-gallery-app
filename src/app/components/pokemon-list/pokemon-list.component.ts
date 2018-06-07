@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-
 import { ObservableMedia } from '@angular/flex-layout';
 import { Observable } from 'rxjs/Observable';
+
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/takeWhile";
 import "rxjs/add/operator/startWith";
 
 import { Pokemon } from './../../model/pokemon';
 import { PokemonService } from './../../services/pokemon.service';
-import { PaginationService } from './../../services/pagination.service';
 
 
 @Component({
@@ -19,27 +18,12 @@ import { PaginationService } from './../../services/pagination.service';
 export class PokemonListComponent implements OnInit {
 
   /**
-   * Array of all Pokemon objects
-   *  (151) that will be used to
-   * provide filter and pagination.
-   * initialized it to an empty
-   * array.
-   */
-  fetchedPokemon: Pokemon[] = [];
-
-  /**
    * a array of Pokemon objects
    * of page size (20) that will
    * be rendered, initialized it to an empty
    * array.
    */
   pokemon: Pokemon[] = [];
-
-  /**
-  * Hold the page current Indexes
-  * start and end Indexes.
-  */
-  page: any = {};
 
   loading: boolean = false;
 
@@ -57,8 +41,7 @@ export class PokemonListComponent implements OnInit {
    * Inject the Pokemon, Pagination and ObservableMedia.
    */
   constructor(private observableMedia: ObservableMedia,
-      private pokemonService: PokemonService,
-      private paginationService: PaginationService) { }
+      private pokemonService: PokemonService) { }
 
   /**
    * A lifecycle method
@@ -68,12 +51,21 @@ export class PokemonListComponent implements OnInit {
    */
   ngOnInit() {
 
+    this.responsiveGridConfig();
+
     /**
-    * Responsive configurations
-    * xs 1 column,
-    * sm & md 2 columns
-    * large & extra large 4 columns
-    */
+     * Load first pokemon page
+     */
+    this.loadFirstPage();
+  }
+
+  /**
+  * Responsive configurations
+  * xs 1 column,
+  * sm & md 2 columns
+  * large & extra large 4 columns
+  */
+  responsiveGridConfig() {
     const grid = new Map([ ["xs", 1], ["sm", 2], ["md", 2],  ["lg", 4], ["xl", 4]]);
 
     let start: number;
@@ -90,57 +82,32 @@ export class PokemonListComponent implements OnInit {
         return grid.get(change.mqAlias);
       })
       .startWith(start);
-
-    /**
-     * Load all Pokemon objects.
-     */
-    this.loadAllPokemon();
-
   }
 
-
   /**
-  * Load all Pokemon 151 objects first time
-  * and then use fetchedPokemon cache for
-  * filtering and pagination.
+  *
+  * Load first page of Pokemon
   */
-  loadAllPokemon() {
+  loadFirstPage() {
     this.loading = true;
+    this.pokemonService.isDataAvailable.subscribe( (isAvailable) => {
 
-    this.pokemonService.getAllPokemon().subscribe( data => {
-
-      this.fetchedPokemon = this.parsePokemonIds(data);
-
-     /**
-      * Load the first page of Pokemon.
-      */
-      this.loadPage();
-      this.loading = false;
-      console.log(`loading finished ... ${this.pokemon.length}`);
-    },
-    (err: any) => {
+      if(isAvailable) {
+        console.log('loaded successfully...');
         this.loading = false;
-      if(err.error instanceof Error) {
-
-        console.log(`An error occurred ${err.error.message}`);
+        this.pokemon = this.pokemonService.getPageData();
       } else {
-
-        console.log(`Backend returned status code ${err.status}`);
-        console.log(`Response Body ${err.error}`);
+        this.loading = false;
       }
     });
   }
 
-  loadPage() {
+  /**
+  * Get next page of Pokemon
+  */
+  loadNextPage() {
     console.log('Next >> ');
-
-   /**
-    * get page object from service
-    */
-    this.page = this.paginationService.getNextPageIndexes();
-
-    // get current page of pokemon
-    this.pokemon = this.fetchedPokemon.slice(this.page.startIndex, this.page.endIndex);
+    this.pokemon = this.pokemonService.getPageData();
   }
 
   /**
@@ -148,13 +115,7 @@ export class PokemonListComponent implements OnInit {
    */
   loadPreviousPage() {
     console.log('Previous << ');
-
-   // get page object from service
-    this.page = this.paginationService.getPreviousPageIndexes();
-
-    // get current page of pokemon
-    this.pokemon = this.fetchedPokemon.slice(this.page.startIndex, this.page.endIndex);
-
+    this.pokemon = this.pokemonService.getPreviousPage();
   }
 
   /**
@@ -164,18 +125,7 @@ export class PokemonListComponent implements OnInit {
    * fond.
    */
   searchPokemon() {
-
-   /**
-    * Only filter if searchToken is not undefined and minimum 2 chars.
-    */
-    if(this.searchToken && this.searchToken !== '' && this.searchToken.length >= 2) {
-      console.log('Searching....' + this.searchToken);
-
-      this.pokemon = Object.assign([], this.fetchedPokemon).filter(
-        item => item.name.toLowerCase().indexOf(this.searchToken.toLowerCase()) > -1
-      );
-
-    }
+    this.pokemon = this.pokemonService.filterPokemonData(this.searchToken);
   }
 
   /**
@@ -188,25 +138,7 @@ export class PokemonListComponent implements OnInit {
     this.searchToken = '';
 
     // get current page of pokemon
-    this.pokemon = this.fetchedPokemon.slice(this.page.startIndex, this.page.endIndex);
-  }
-
-
-  /**
-  *Utility method to parse ids from url.
-  *
-  */
-  private parsePokemonIds(data) {
-    var allPokemon = [];
-    data.forEach((entry) => {
-      var p = new Pokemon();
-      p.name = entry.name;
-      var url = entry.url;
-      p.id = entry.url.match(/\d+(?!.*\d)/);
-      allPokemon.push(p);
-    });
-
-    return allPokemon;
+    this.pokemon = this.pokemonService.clearSearchResult();
   }
 
 }

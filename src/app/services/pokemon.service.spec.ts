@@ -3,6 +3,8 @@ import { TestBed, inject } from '@angular/core/testing';
 
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { PokemonService } from './pokemon.service';
+import { PaginationService } from './pagination.service';
+
 import { Pokemon } from './../model/pokemon';
 
 
@@ -13,7 +15,10 @@ describe('PokemonService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [PokemonService],
+      providers: [
+        PokemonService,
+        PaginationService
+      ],
       imports: [HttpClientTestingModule]
     });
 

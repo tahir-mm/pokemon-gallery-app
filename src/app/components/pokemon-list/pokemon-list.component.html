@@ -2,20 +2,18 @@
 
   <div class="row">
 
-    <div class="col-sm-4" style="text-align:right">
-      <lable>Search:</lable>
-      <input [(ngModel)]='searchToken' style="height:30px; width:200px;" placeholder="Minimum 2 characters">
-
-    </div>
-
-    <div class="col-sm-4" style="text-align:left">
+    <div class="col-sm-6 form-group" style="text-align:right">
+      <lable for="search">Search:</lable>
+      <input id="search" [(ngModel)]='searchToken' style="height:30px; width:200px;" placeholder="Minimum 2 characters">
       <button (click)="searchPokemon()">Search</button>
       <button (click)="clearSearch()">Clear Search </button>
     </div>
 
+    <div class="col-sm-2" style="text-align:left"></div>
+
     <div class="col-sm-4" style="text-align:center">
       <button (click)="loadPreviousPage()">Previous </button>
-      <button (click)="loadPage()">Next </button>
+      <button (click)="loadNextPage()">Next </button>
     </div>
   </div>
 
